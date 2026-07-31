@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: 36f0d0956db2aa241b2b206a90030fde
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 9100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 165785
+  packageName: Human Melee Animations FREE
+  packageVersion: 2.0.2
+  assetPath: Assets/Kevin Iglesias/Human Animations/Unity Demo Scenes/Human Melee
+    Animations/AnimatorControllers/Male/Polearm/HumanM@RunStrafe01_Left - Polearm.controller
+  uploadId: 937352

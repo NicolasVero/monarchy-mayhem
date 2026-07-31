@@ -1,0 +1,12 @@
+{
+    "distance": 5.0,
+    "height": 1.8,
+    "shoulder": 0.8,
+
+    "sensitivity": 3.0,
+    "pitchMin": -30.0,
+    "pitchMax": 55.0,
+
+    "smooth": 0.05,
+    "collisionRadius": 0.28
+}

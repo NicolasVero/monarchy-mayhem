@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class Spawner : MonoBehaviour {
 
@@ -32,6 +33,8 @@ public class Spawner : MonoBehaviour {
     private SpawnersController spawnerController;
     private float radius;
     private PlayerController player;
+    private bool hasEncounterPool;
+    private string encounterScene;
 
 
     void Awake(){
@@ -71,12 +74,21 @@ public class Spawner : MonoBehaviour {
         this.collectiblesContainer = this.spawnerController.GetColleciblesContainer();
     
         this.viewSpawnPoint = this.spawnerController.GetViewSpawnPoint();
-        this.spawnDelay = this.spawnerController.GetSpawnDelay();
+
+        // Awake() a calculé un délai selon la difficulté (5 / 4 / 2). La valeur sérialisée
+        // du contrôleur l'écrasait systématiquement, or elle vaut 0 sur Village et Chateau
+        // et 1 sur Tutorial : les spawners tiraient à chaque frame — ou presque — jusqu'au
+        // plafond d'entités, et le réglage par difficulté était du code mort.
+        // La difficulté fait maintenant référence ; une scène peut seulement ralentir.
+        this.spawnDelay = Mathf.Max(this.spawnDelay, this.spawnerController.GetSpawnDelay());
     
         this.peasants = this.spawnerController.GetPeasantsPrefabs();
         this.bourgeois = this.spawnerController.GetBourgeoisPrefabs();
         this.knights = this.spawnerController.GetKnightsPrefabs();
         this.pickUps = this.spawnerController.GetPickUpsPrefabs();
+
+        this.encounterScene = SceneManager.GetActiveScene().name;
+        this.hasEncounterPool = this.spawnerController.UsesEncounterPool(this.encounterScene);
 
         if(this.currentPickUpGroup == null || this.currentPickUpGroup.Length == 0) {
             this.GeneratePickUpGroup();
@@ -97,25 +109,43 @@ public class Spawner : MonoBehaviour {
     
     private void SpawnEnemies() {
 
-        int randNumber = GameController.Random(0, 100);
-
-        if(this.allowPeasants) {
-            if(randNumber < this.chancePeasants) {
-                Instantiate(this.peasants[GameController.Random(0, this.peasants.Length - 1)], transform.position, Quaternion.identity).transform.parent = this.enemiesContainer.transform;
-            }
+        if(this.hasEncounterPool) {
+            GameObject selected = this.spawnerController.PickEncounterEnemy(this.encounterScene);
+            if(selected != null) this.SpawnEnemy(selected);
+            return;
         }
 
-        if(this.allowBourgeois) {
-            if(randNumber < this.chanceBourgeois) {
-                Instantiate(this.bourgeois[GameController.Random(0, this.bourgeois.Length - 1)], transform.position, Quaternion.identity).transform.parent = this.enemiesContainer.transform;
-            }
-        }
+        // Repli pour une scene non declaree : les anciens pourcentages deviennent
+        // des poids, ce qui garantit toujours au plus un spawn par intervalle.
+        int peasantWeight = this.allowPeasants && this.peasants != null && this.peasants.Length > 0
+                          ? Mathf.Max(this.chancePeasants, 0)
+                          : 0;
+        int bourgeoisWeight = this.allowBourgeois && this.bourgeois != null && this.bourgeois.Length > 0
+                            ? Mathf.Max(this.chanceBourgeois, 0)
+                            : 0;
+        int knightWeight = this.allowKnights && this.knights != null && this.knights.Length > 0
+                         ? Mathf.Max(this.chanceKnights, 0)
+                         : 0;
+        int total = peasantWeight + bourgeoisWeight + knightWeight;
 
-        if(this.allowKnights) {
-            if(randNumber < this.chanceKnights) {
-                Instantiate(this.knights[GameController.Random(0, this.knights.Length - 1)], transform.position, Quaternion.identity).transform.parent = this.enemiesContainer.transform;
-            }
+        if(total <= 0) return;
+
+        int roll = GameController.Random(0, total - 1);
+
+        if(roll < peasantWeight) {
+            this.SpawnEnemy(this.peasants[GameController.Random(0, this.peasants.Length - 1)]);
+        } else if(roll < peasantWeight + bourgeoisWeight) {
+            this.SpawnEnemy(this.bourgeois[GameController.Random(0, this.bourgeois.Length - 1)]);
+        } else {
+            this.SpawnEnemy(this.knights[GameController.Random(0, this.knights.Length - 1)]);
         }
+    }
+
+    private void SpawnEnemy(GameObject prefab) {
+        if(prefab == null) return;
+
+        Transform spawned = Instantiate(prefab, transform.position, Quaternion.identity).transform;
+        spawned.SetParent(this.enemiesContainer.transform);
     }
 
     private void SpawnPickUp() {

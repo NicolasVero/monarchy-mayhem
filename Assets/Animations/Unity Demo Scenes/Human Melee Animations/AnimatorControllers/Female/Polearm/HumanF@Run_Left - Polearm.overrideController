@@ -1,0 +1,15 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!221 &22100000
+AnimatorOverrideController:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: HumanF@Run_Left - Polearm
+  m_Controller: {fileID: 9100000, guid: 075a843c98121464d85c440bb7399b04, type: 2}
+  m_Clips:
+  - m_OriginalClip: {fileID: 3094330708855449807, guid: 4c457101953390e428f3996252f89ce6, type: 3}
+    m_OverrideClip: {fileID: 3094330708855449807, guid: 40f0c0342e006424190c3c65989cc8ed, type: 3}
+  - m_OriginalClip: {fileID: 3094330708855449807, guid: 9f9dbe8815370164d8a2214328af4f13, type: 3}
+    m_OverrideClip: {fileID: 3094330708855449807, guid: 435a4728904deaf41a2ea8928e6c2c35, type: 3}

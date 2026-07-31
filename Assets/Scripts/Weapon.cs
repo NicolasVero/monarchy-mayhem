@@ -9,6 +9,7 @@
         public int weaponID;
         public string weaponName;
         public string tier;
+        public string family;
         public int id;
         public int attack;
         public float attackSpeed;
@@ -29,6 +30,7 @@
                 this.id = weapon.id;
                 this.weaponName = (GameController.GetSystemLanguageUpper() == "FR") ? weapon.name.fr : weapon.name.en;
                 this.tier = weapon.tier;
+                this.family = weapon.family;
                 this.attack = weapon.attack;
                 this.attackSpeed = weapon.attackSpeed;
                 this.knockback = weapon.knockback;

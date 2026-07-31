@@ -14,14 +14,25 @@ public class DifficultyStats {
 
 [Serializable]
 public class EnemyStats {
-    public string type; 
-    public float chanceToDrop; 
+    public string type;
+    public float chanceToDrop;
     public int health;
-    public int attack; 
+    public int attack;
     public float attackSpeed;
     public float speed;
-    public float range; 
+    public float range;
     public int xp;
+
+    // Résistance à l'interruption : en dessous du seuil, l'ennemi encaisse sans
+    // broncher. C'est ce qui rend une arme lourde utile face à un chevalier.
+    public float poise;
+
+    // Durée d'anticipation avant le coup. Elle était figée à 0.5 s dans le code
+    // et surtout invisible : l'animation ne partait qu'à l'impact.
+    public float windup;
+
+    // Ouverture du cône de frappe : au-delà, l'attaque rate.
+    public float attackAngle;
 }
 
 

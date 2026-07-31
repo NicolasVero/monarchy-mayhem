@@ -18,6 +18,13 @@ public class AudioController : MonoBehaviour {
     [SerializeField] AudioSource pauseMenuSFX;
     [SerializeField] AudioSource lvlUpSFX;
 
+    [Header("Combat (à remplir plus tard)")]
+    [SerializeField] AudioSource[] blockSFX;
+    [SerializeField] AudioSource[] parrySFX;
+    [SerializeField] AudioSource[] dodgeSFX;
+    [SerializeField] AudioSource[] playerHurtSFX;
+    [SerializeField] AudioSource[] enemyDeathSFX;
+
 
     public void PlayThemeSFX() {
         this.randomTheme = GameController.Random(0, this.mainTheme.Length - 1);
@@ -37,8 +44,42 @@ public class AudioController : MonoBehaviour {
         Invoke(nameof(this.PlayBossThemeSFX), this.bossTheme[this.randomBossTheme].clip.length);
     }
 
-    public void PlaySlashSFX() { 
-        this.slashSFX[GameController.Random(0, this.slashSFX.Length - 1)].Play(); 
+    public void PlaySlashSFX() {
+        this.PlaySlashSFX(1f);
+    }
+
+    // Les 34 armes partagent 3 sons. Moduler la hauteur suffit à les distinguer à
+    // l'oreille — grave et lourd pour une masse, sec et haut pour une dague — sans
+    // avoir à produire un seul nouvel échantillon.
+    public void PlaySlashSFX(float pitch) {
+
+        if(this.slashSFX == null || this.slashSFX.Length == 0) return;
+
+        AudioSource source = this.slashSFX[GameController.Random(0, this.slashSFX.Length - 1)];
+        if(source == null) return;
+
+        source.pitch = Mathf.Clamp(pitch + UnityEngine.Random.Range(-0.06f, 0.06f), 0.5f, 2f);
+        source.Play();
+    }
+
+    // Points d'entrée du combat. Les tableaux sont vides pour l'instant : le projet
+    // n'a que 3 sons de combat. Chaque méthode se contente de ne rien faire tant que
+    // les clips ne sont pas renseignés dans l'inspecteur.
+    public void PlayBlockSFX()       { PlayRandom(this.blockSFX,      0.9f); }
+    public void PlayParrySFX()       { PlayRandom(this.parrySFX,      1.15f); }
+    public void PlayDodgeSFX()       { PlayRandom(this.dodgeSFX,      1f); }
+    public void PlayPlayerHurtSFX()  { PlayRandom(this.playerHurtSFX, 1f); }
+    public void PlayEnemyDeathSFX()  { PlayRandom(this.enemyDeathSFX, 1f); }
+
+    private static void PlayRandom(AudioSource[] sources, float pitch) {
+
+        if(sources == null || sources.Length == 0) return;
+
+        AudioSource source = sources[GameController.Random(0, sources.Length - 1)];
+        if(source == null) return;
+
+        source.pitch = Mathf.Clamp(pitch + UnityEngine.Random.Range(-0.05f, 0.05f), 0.5f, 2f);
+        source.Play();
     }
 
     public void PlayDeathSFX() { 

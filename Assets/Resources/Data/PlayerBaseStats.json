@@ -1,16 +1,20 @@
 {
     "totalXP" : 0,
     "xp" : 0,
-    "xpToNext" : 1,
+    "xpToNext" : 5,
     "level" : 1,
     "maxLevel" : 25,
 
-    "attack" : 80,
+    "attack" : 10,
     "attackSpeed" : 2.0,
     "range" : 2.5,
     "resistance" : 0,
-    "speed" : 20.0,
+    "speed" : 2.0,
     "knockback" : 1.0,
-    "health" : 2500,
-    "regeneration" : 5
+    "health" : 120,
+    "regeneration" : 5,
+
+    "stamina" : 100.0,
+    "staminaRegen" : 22.0,
+    "staminaRegenDelay" : 0.8
 }

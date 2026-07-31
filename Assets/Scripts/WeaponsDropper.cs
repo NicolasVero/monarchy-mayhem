@@ -45,15 +45,24 @@ public class WeaponsDropper : MonoBehaviour {
         CreateWeapon(-1, position);
     }
 
+    // Rejection sampling : la boucle était infinie par construction. Elle se termine
+    // en pratique, mais un tableau vide ou des probabilités toutes à zéro figeaient
+    // le jeu. On borne les tirages et on retombe sur un tirage uniforme.
     private int GiveRandomWeaponID() {
 
-        while (true) {
+        if (this.probabilities == null || this.probabilities.Length == 0)
+            return -1;
+
+        const int maxAttempts = 200;
+
+        for (int attempt = 0; attempt < maxAttempts; attempt++) {
             int number = Random.Range(0, this.probabilities.Length);
 
             if (Random.value < this.probabilities[number])
                 return number;
-            
         }
+
+        return Random.Range(0, this.probabilities.Length);
     }
 
     public int GetWeaponsListLength() {

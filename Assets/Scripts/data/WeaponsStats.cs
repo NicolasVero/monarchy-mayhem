@@ -10,6 +10,7 @@ public class WeaponStat {
     public int id;
     public WeaponName name;
     public string tier;
+    public string family;   // voir WeaponFamilies.json ; vide = sword1h par défaut
     public int attack;
     public float attackSpeed;
     public float knockback;

@@ -13,4 +13,10 @@ public class PlayerBaseStats {
     public float speed;
     public float knockback;
     public int regeneration;
+
+    // Endurance : consommée par les attaques, la roulade et le sprint.
+    // La capacité et la régénération progressent via leurs améliorations dédiées.
+    public float stamina;
+    public float staminaRegen;
+    public float staminaRegenDelay;
 }

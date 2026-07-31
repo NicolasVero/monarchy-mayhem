@@ -18,8 +18,14 @@ public class Difficulty : MonoBehaviour {
 		SceneManager.LoadScene(Names.Scenes[0]);
 	}
 
+	// Difficulté appliquée quand aucun objet Difficulty n'est présent — c'est le cas
+	// dès qu'on lance une scène de jeu directement depuis l'éditeur, sans passer par
+	// le menu. Mettre "easy" ici rend les tests confortables ; repasser à "medium"
+	// avant une build si le comportement par défaut doit changer.
+	public const string Default = "easy";
+
 	public string GetDifficulty() {
-		return (this.difficulty == null) ? "medium" : this.difficulty;
+		return (this.difficulty == null) ? Default : this.difficulty;
 	}
 
 	public void EnableChoice() {

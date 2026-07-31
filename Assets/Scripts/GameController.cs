@@ -17,20 +17,25 @@ public class GameController : MonoBehaviour {
         return UnityEngine.Random.value;
     }
 
+    // Le timeScale appartient à TimeController : il arbitre entre la pause,
+    // le ralenti de mort et le hitstop du combat, qui écrivaient sinon tous
+    // sur Time.timeScale sans se voir.
     public static void SetGameState() {
-        Time.timeScale = (Time.timeScale == 0) ? 1 : 0;
+        TimeController.TogglePause();
     }
 
     public static void SetGameState(bool state) {
-        Time.timeScale = (state) ? 1 : 0;
+        TimeController.SetBaseScale(state ? 1f : 0f);
     }
 
     public static void SetGameState(float value) {
-        Time.timeScale = value;
+        TimeController.SetBaseScale(value);
     }
 
+    // Doit rester faux pendant un hitstop, sinon l'input d'attaque est bloqué
+    // à chaque coup porté (PlayerController vérifie GameIsFreeze()).
     public static bool GameIsFreeze() {
-        return Time.timeScale == 0;
+        return TimeController.IsPaused;
     }
 
     public static void SetCursorVisibility(bool state) {

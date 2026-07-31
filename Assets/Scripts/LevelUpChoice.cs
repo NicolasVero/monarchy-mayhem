@@ -19,7 +19,7 @@ public class LevelUpChoice : MonoBehaviour {
 
     private string[] bannersNames;
     private int[] bannersLevel;
-    private int bannersLength = 7;
+    private int bannersLength = 9;
     private int marginMultiplicator;
 
     public void Awake() {
@@ -31,9 +31,42 @@ public class LevelUpChoice : MonoBehaviour {
             "range_",
             "attack_speed_",
             "speed_",
-            "regeneration_"
+            "regeneration_",
+            "stamina_",
+            "stamina_regen_"
         };
+        this.EnsureStaminaBanners();
         GameObject.Find("Upgrade Interface").GetComponentInChildren<Image>().sprite = Resources.Load<Sprite>("Interface/Backgrounds/controle_" + GameController.GetSystemLanguageLower());
+    }
+
+    private void EnsureStaminaBanners() {
+        if(this.banners != null && this.banners.Length >= this.bannersLength) return;
+        if(this.banners == null || this.banners.Length < 7) {
+            Debug.LogError("[LevelUpChoice] Les 7 bannieres d'origine doivent etre assignees.");
+            this.bannersLength = (this.banners != null) ? this.banners.Length : 0;
+            return;
+        }
+
+        GameObject[] expanded = new GameObject[this.bannersLength];
+        Array.Copy(this.banners, expanded, this.banners.Length);
+
+        expanded[7] = this.CreateBanner(this.banners[1], "Stamina Banner", this.ChoiceStamina);
+        expanded[8] = this.CreateBanner(this.banners[6], "Stamina Regen Banner", this.ChoiceStaminaRegen);
+        this.banners = expanded;
+    }
+
+    private GameObject CreateBanner(GameObject template, string objectName, UnityEngine.Events.UnityAction action) {
+        GameObject banner = Instantiate(template, template.transform.parent);
+        banner.name = objectName;
+
+        Button button = banner.GetComponent<Button>();
+        if(button != null) {
+            button.onClick = new Button.ButtonClickedEvent();
+            button.onClick.AddListener(action);
+        }
+
+        GameController.SetPanelVisibility(banner, false);
+        return banner;
     }
 
     public void UpdateStatsDisplay() {
@@ -44,7 +77,9 @@ public class LevelUpChoice : MonoBehaviour {
             this.playerController.GetRangeLevel(),
             this.playerController.GetAttackSpeedLevel(),
             this.playerController.GetSpeedLevel(),
-            this.playerController.GetRegenerationLevel()
+            this.playerController.GetRegenerationLevel(),
+            this.playerController.GetStaminaLevel(),
+            this.playerController.GetStaminaRegenLevel()
         };
 
         List<int> isMaxLevel = new List<int>();
@@ -180,6 +215,16 @@ public class LevelUpChoice : MonoBehaviour {
 
     public void ChoiceRegeneration() {
         this.playerController.UpdateRegeneration();
+        this.ResumeGame();
+    }
+
+    public void ChoiceStamina() {
+        this.playerController.UpdateStamina();
+        this.ResumeGame();
+    }
+
+    public void ChoiceStaminaRegen() {
+        this.playerController.UpdateStaminaRegen();
         this.ResumeGame();
     }
 

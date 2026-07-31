@@ -27,6 +27,8 @@ public class SpawnersController : MonoBehaviour {
     [SerializeField] private bool viewSpawnPoint;
     [SerializeField] private float spawnDelay;
 
+    [Header("Combat testing")]
+    [SerializeField] private bool specialEnemyTestMode;
 
     [Header("Instances")]
     [SerializeField] private GameObject[] peasants;
@@ -38,6 +40,7 @@ public class SpawnersController : MonoBehaviour {
     private bool isPaused = false;
     private GameObject[] spawnerObjects;
     private Difficulty difficultyController;
+    private int specialEnemyIndex;
 
     void Start() {
 
@@ -47,11 +50,15 @@ public class SpawnersController : MonoBehaviour {
 
             this.difficultyController.DisableChoice();
 
-            if(this.difficultyController.GetDifficulty() == "easy") this.maxEntities = 10;
-            if(this.difficultyController.GetDifficulty() == "medium") this.maxEntities = 20;
-            if(this.difficultyController.GetDifficulty() == "hard") this.maxEntities = 40;
+            // Plafonds abaissés depuis la refonte du combat : les ennemis étaient plus
+            // lents que le joueur et la moitié de la horde n'arrivait jamais jusqu'à
+            // lui. Maintenant qu'ils convergent tous et qu'ils télégraphient leurs
+            // coups, 20 simultanés rendaient le combat illisible.
+            if(this.difficultyController.GetDifficulty() == "easy") this.maxEntities = 5;
+            if(this.difficultyController.GetDifficulty() == "medium") this.maxEntities = 9;
+            if(this.difficultyController.GetDifficulty() == "hard") this.maxEntities = 16;
         } else {
-            this.maxEntities = 20;
+            this.maxEntities = 5;   // pas de menu : on lance une scène en test, cf. Difficulty.Default
         }
         
     
@@ -113,6 +120,20 @@ public class SpawnersController : MonoBehaviour {
     public void SetMaxEntities(int maxEntities) {
         this.maxEntities = maxEntities;
     } 
+
+    public bool UsesEncounterPool(string sceneName) {
+        return this.specialEnemyTestMode || EncounterPoolLibrary.HasPool(sceneName);
+    }
+
+    public GameObject PickEncounterEnemy(string sceneName) {
+        if(!this.specialEnemyTestMode)
+            return EncounterPoolLibrary.Pick(sceneName);
+
+        GameObject selected = EncounterPoolLibrary.PickSpecial(sceneName, this.specialEnemyIndex);
+        this.specialEnemyIndex++;
+
+        return selected != null ? selected : EncounterPoolLibrary.Pick(sceneName);
+    }
 
     public float GetRadius() {
         return this.radius;

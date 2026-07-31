@@ -93,9 +93,11 @@ public class DanceWheelController : MonoBehaviour {
                 break;
             case 5:
                 this.playerController.ChangeAnimationState("Ibreakyou");
+                this.SetUpperBodyDance("IBreakYou");
                 break;
             case 6:
                 this.playerController.ChangeAnimationState("Wave");
+                this.SetUpperBodyDance("Wave");
                 break;
         }
 
@@ -119,6 +121,21 @@ public class DanceWheelController : MonoBehaviour {
         this.playerController.Invoke("DisableIsDancing", this.playerController.GetAnimator().runtimeAnimatorController.animationClips.ToList().FirstOrDefault(clip => clip.name == animationName).length);
         this.frameChecked = false;
         Invoke("CheckFrame", 1f);
+    }
+
+    private void SetUpperBodyDance(string animationName) {
+        AnimationClip clip = this.playerController.GetAnimator().runtimeAnimatorController.animationClips
+            .FirstOrDefault(candidate => candidate.name == animationName);
+
+        if(clip == null) return;
+
+        this.playerController.SetIsDancing(true);
+        this.playerController.Invoke("DisableIsDancing", clip.length);
+        Invoke(nameof(StopUpperBodyDance), clip.length);
+    }
+
+    private void StopUpperBodyDance() {
+        this.playerController.StopAttackAnimation();
     }
 
     private void CheckFrame() {

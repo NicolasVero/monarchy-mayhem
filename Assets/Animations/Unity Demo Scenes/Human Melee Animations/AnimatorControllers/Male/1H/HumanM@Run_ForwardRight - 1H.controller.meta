@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: e202884cf8b711b49a5fce56a35edb74
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 9100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 165785
+  packageName: Human Melee Animations FREE
+  packageVersion: 2.0.2
+  assetPath: Assets/Kevin Iglesias/Human Animations/Unity Demo Scenes/Human Melee
+    Animations/AnimatorControllers/Male/1H/HumanM@Run_ForwardRight - 1H.controller
+  uploadId: 937352

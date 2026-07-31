@@ -1,0 +1,11 @@
+Source:
+Quaternius - Universal Animation Library / Universal Animation Library 2
+https://quaternius.com/packs/universalanimationlibrary.html
+https://quaternius.com/packs/universalanimationlibrary2.html
+
+License:
+CC0 1.0 Universal (CC0 1.0) Public Domain Dedication
+https://creativecommons.org/publicdomain/zero/1.0/
+
+The PolearmThrust and SwordCombo clips were extracted from the free standard
+Unity FBX distributions and renamed for this project.

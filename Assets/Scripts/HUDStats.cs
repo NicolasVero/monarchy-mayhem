@@ -45,7 +45,10 @@ public class HUDStats : MonoBehaviour {
     [Header("Joueur")]
     [SerializeField] private PlayerController player;
 
-    private readonly string iconsPath = "Interface/Icons/"; 
+    private readonly string iconsPath = "Interface/Icons/";
+
+    // Un avertissement par champ manquant, pas un par frame.
+    private static readonly HashSet<string> reportedMissing = new HashSet<string>();
 
 
     void Start() {
@@ -67,66 +70,85 @@ public class HUDStats : MonoBehaviour {
             if(this.difficultyController.GetDifficulty() == "medium") name = "Soulèvement"; 
             if(this.difficultyController.GetDifficulty() == "hard") name = "Insurrection";
         } else {
-            this.difficultyIcon.texture = Resources.Load<Texture2D>(this.iconsPath + "medium");
-            name = "Soulèvement";
+            this.difficultyIcon.texture = Resources.Load<Texture2D>(this.iconsPath + Difficulty.Default);
+            name = "Agitation";
         }
 
         this.difficultyName.text = name; 
     }
 
+    // Un seul champ non assigné dans l'inspecteur levait une NullReferenceException
+    // à la première ligne d'UpdateStats, et AUCUNE des stats suivantes n'était écrite :
+    // tout le panneau restait figé sur le texte saisi dans la scène. Chaque écriture
+    // est désormais isolée, et les champs manquants sont nommés une fois en Console.
+    private static void SetText(TextMeshProUGUI field, string value, string fieldName) {
+
+        if(field == null) {
+            if(reportedMissing.Add(fieldName))
+                Debug.LogWarning("[HUDStats] Le champ \"" + fieldName + "\" n'est pas assigné dans l'inspecteur : cette stat ne s'affichera pas.");
+
+            return;
+        }
+
+        field.text = value;
+    }
+
+    private static void SetDelta(TextMeshProUGUI field, float value, string fieldName, bool lowerIsBetter = false) {
+
+        if(field == null) {
+            if(reportedMissing.Add(fieldName))
+                Debug.LogWarning("[HUDStats] Le champ \"" + fieldName + "\" n'est pas assigné dans l'inspecteur : cette stat ne s'affichera pas.");
+
+            return;
+        }
+
+        if(value == 0f) {
+            field.text = "";
+            return;
+        }
+
+        field.text = "" + value;
+        field.color = (lowerIsBetter ? value < 0f : value > 0f) ? Color.green : Color.red;
+    }
+
     public void UpdateHealth() {
-        this.healthStat.text = (this.player.GetHealth() >= 0) ? this.player.GetHealth() + " / " + this.player.GetMaxActualHealth() : "0 / " + this.player.GetMaxActualHealth();
+        if(this.player == null) return;
+
+        int health = Mathf.Max(this.player.GetHealth(), 0);
+        SetText(this.healthStat, health + " / " + this.player.GetMaxActualHealth(), "healthStat");
     }
 
     public void UpdateStats() {
+
+        if(this.player == null) return;
+
         this.UpdateHealth();
-        this.levelStat.text        = "" + this.player.GetLevel();
-        this.killStat.text         = "" + this.player.GetKillCounter();
-        this.attackStat.text       = "" + this.player.GetAttack();
-        this.attackSpeedStat.text  = "" + this.player.GetAttackSpeed().ToString("F1");
-        this.rangeStat.text        = "" + this.player.GetRange();
-        this.resistanceStat.text   = "" + this.player.GetResistance();
-        this.speedStat.text        = "" + this.player.GetSpeed();
-        this.knockbackStat.text    = "" + this.player.GetKnockback();
-        this.regenerationStat.text = "" + this.player.GetRegeneration();
-        this.weaponName.text       = "" + this.player.GetWeaponName();
 
-        this.weaponAttack.text = "";
-        this.weaponRange.text = "";
-        this.weaponAttackSpeed.text = "";
-        this.weaponSpeed.text = "";
-        this.weaponRegeneration.text = "";
-        this.weaponKnockback.text = "";
+        SetText(this.levelStat,        "" + this.player.GetLevel(),                        "levelStat");
+        SetText(this.killStat,         "" + this.player.GetKillCounter(),                  "killStat");
+        SetText(this.attackStat,       "" + this.player.GetAttack(),                       "attackStat");
+        SetText(this.attackSpeedStat,  this.player.GetAttackSpeed().ToString("F1"),        "attackSpeedStat");
+        SetText(this.rangeStat,        "" + this.player.GetRange(),                        "rangeStat");
+        SetText(this.resistanceStat,   "" + this.player.GetResistance(),                   "resistanceStat");
+        SetText(this.speedStat,        "" + this.player.GetSpeed(),                        "speedStat");
+        SetText(this.knockbackStat,    "" + this.player.GetKnockback(),                    "knockbackStat");
+        SetText(this.regenerationStat, "" + this.player.GetRegeneration(),                 "regenerationStat");
+        string displayedWeaponName = this.player.GetWeaponName();
+        int weaponAmmo = this.player.GetWeaponAmmo();
 
-        if(this.player.GetWeaponAttack() != 0) {
-            this.weaponAttack.text = "" + this.player.GetWeaponAttack();
-            this.weaponAttack.color = (this.player.GetWeaponAttack() > 0) ? Color.green : Color.red;
-        }
+        if(!string.IsNullOrEmpty(displayedWeaponName) && weaponAmmo > 0)
+            displayedWeaponName += "  x" + weaponAmmo;
 
-        if(this.player.GetWeaponRange() != 0) {
-            this.weaponRange.text = "" + this.player.GetWeaponRange();
-            this.weaponRange.color = (this.player.GetWeaponRange() > 0) ? Color.green : Color.red;
-        }
-    
-        if(this.player.GetWeaponAttackSpeed() != 0) {
-            this.weaponAttackSpeed.text = "" + this.player.GetWeaponAttackSpeed();
-            this.weaponAttackSpeed.color = (this.player.GetWeaponAttackSpeed() < 0) ? Color.green : Color.red;
-        }
+        SetText(this.weaponName,       displayedWeaponName,                               "weaponName");
 
-        if(this.player.GetWeaponSpeed() != 0) {
-            this.weaponSpeed.text = "" + this.player.GetWeaponSpeed();
-            this.weaponSpeed.color = (this.player.GetWeaponSpeed() > 0) ? Color.green : Color.red;
-        }
-
-        if(this.player.GetWeaponRegeneration() != 0) {
-            this.weaponRegeneration.text = "" + this.player.GetWeaponRegeneration();
-            this.weaponRegeneration.color = (this.player.GetWeaponRegeneration() > 0) ? Color.green : Color.red;
-        }
-
-        if(this.player.GetWeaponKnockback() != 0) {
-            this.weaponKnockback.text = "" + this.player.GetWeaponKnockback();
-            this.weaponKnockback.color = (this.player.GetWeaponKnockback() > 0) ? Color.green : Color.red;
-        }
+        // Bonus d'arme : vert quand c'est un gain. Pour la vitesse d'attaque, qui est
+        // un délai, un chiffre négatif est un gain.
+        SetDelta(this.weaponAttack,       this.player.GetWeaponAttack(),       "weaponAttack");
+        SetDelta(this.weaponRange,        this.player.GetWeaponRange(),        "weaponRange");
+        SetDelta(this.weaponAttackSpeed,  this.player.GetWeaponAttackSpeed(),  "weaponAttackSpeed", true);
+        SetDelta(this.weaponSpeed,        this.player.GetWeaponSpeed(),        "weaponSpeed");
+        SetDelta(this.weaponRegeneration, this.player.GetWeaponRegeneration(), "weaponRegeneration");
+        SetDelta(this.weaponKnockback,    this.player.GetWeaponKnockback(),    "weaponKnockback");
     }
     
     public void MaxAttack() {

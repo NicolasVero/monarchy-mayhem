@@ -1,0 +1,15 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!221 &22100000
+AnimatorOverrideController:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: HumanF@RunStrafe01_BackwardRight - 2H
+  m_Controller: {fileID: 9100000, guid: 2de1b2812f9db534a88df0250a92ebcb, type: 2}
+  m_Clips:
+  - m_OriginalClip: {fileID: 3094330708855449807, guid: 3d694a1e4e41a3346b76b6f2a46a6037, type: 3}
+    m_OverrideClip: {fileID: 3094330708855449807, guid: e66fc27c1f45a14419a52026e99b76cf, type: 3}
+  - m_OriginalClip: {fileID: -2904948948297995288, guid: f6a76e1e7adcd69428a86bd1d8e9b7ac, type: 3}
+    m_OverrideClip: {fileID: 791551332734995869, guid: 1fa469bdb64dcf443ad00e0663110f41, type: 3}

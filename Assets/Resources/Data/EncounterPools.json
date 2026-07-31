@@ -1,0 +1,40 @@
+{
+    "pools": [
+        {
+            "scene": "Tutorial",
+            "enemies": [
+                { "type": "peasant", "weight": 45 },
+                { "type": "bourgeois", "weight": 25 },
+                { "type": "peasant_lancer", "weight": 10 },
+                { "type": "peasant_thrower", "weight": 10 },
+                { "type": "bourgeois_support", "weight": 10 }
+            ]
+        },
+        {
+            "scene": "Village",
+            "enemies": [
+                { "type": "peasant", "weight": 35 },
+                { "type": "bourgeois", "weight": 25 },
+                { "type": "peasant_lancer", "weight": 15 },
+                { "type": "peasant_thrower", "weight": 15 },
+                { "type": "bourgeois_support", "weight": 10 }
+            ]
+        },
+        {
+            "scene": "Chateau",
+            "enemies": [
+                { "type": "peasant", "weight": 10 },
+                { "type": "bourgeois", "weight": 10 },
+                { "type": "knight", "weight": 15 },
+                { "type": "peasant_lancer", "weight": 10 },
+                { "type": "peasant_thrower", "weight": 15 },
+                { "type": "bourgeois_support", "weight": 15 },
+                { "type": "knight_lancer", "weight": 25 }
+            ]
+        },
+        {
+            "scene": "Salle_combat_final",
+            "enemies": []
+        }
+    ]
+}
